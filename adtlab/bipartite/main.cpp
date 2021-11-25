@@ -42,7 +42,7 @@ bool bi_bfs(int s) {
 
 void input_graph() {
   cin >> n >> m;
-  for (int i = 0; i < m; i++) {
+  for (int i = 0; i < n; i++) {
     adj[i].clear();
   }
   for (int i = 0; i < m; i++) {
