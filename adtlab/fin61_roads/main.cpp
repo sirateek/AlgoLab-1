@@ -6,42 +6,26 @@ using namespace std;
 
 // Pair < Connected Vertex, Min Speed Limit >
 vector<pair<int, int>> graph[200000];
+bool seen[200000];
 
 int n, m, s, q;
 
-bool is_possible(int city_a, int city_b) {
-  // Search by bfs
-  queue<int> vertex;
-  bool seen[200000];
-  // Init seen
-  for (int i = 0; i < m; i++) {
-    seen[i] = false;
+bool is_possible = false;
+void is_possible_dfs(int city_a, int city_b) {
+  seen[city_a] = true;
+  if (is_possible) {
+    return;
   }
-
-  vertex.push(city_a);
-
-  while (!vertex.empty()) {
-    int focused_vertex = vertex.front();
-    vertex.pop();
-    if (seen[focused_vertex]) {
-      continue;
-    }
-    seen[focused_vertex] = true;
-    if (focused_vertex == city_b) {
-      return true;
-    }
-
-    for (int i = 0; i < graph[focused_vertex].size(); i++) {
-      pair<int, int> focused_road = graph[focused_vertex][i];
-      if (seen[focused_road.first]) {
-        continue;
+  for (int i = 0; i < graph[city_a].size(); i++) {
+    pair<int, int> focused_road = graph[city_a][i];
+    if (!seen[focused_road.first] && focused_road.second <= s) {
+      if (focused_road.first == city_b) {
+        is_possible = true;
+        return;
       }
-      if (focused_road.second <= s) {
-        vertex.push(focused_road.first);
-      }
+      is_possible_dfs(focused_road.first, city_b);
     }
   }
-  return false;
 }
 
 int main() {
@@ -62,7 +46,13 @@ int main() {
     cin >> city_a >> city_b;
     city_a--;
     city_b--;
-    if (is_possible(city_a, city_b)) {
+
+    for (int i = 0; i < m; i++) {
+      seen[i] = false;
+    }
+    is_possible = false;
+    is_possible_dfs(city_a, city_b);
+    if (is_possible) {
       cout << "yes" << endl;
     } else {
       cout << "no" << endl;
